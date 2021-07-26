@@ -7,31 +7,32 @@ datasource db {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native"]
 }
 
-model TodoItem{
-  id String @id @default(uuid())
-  active Boolean @default(true)
-  title String @db.Text()
-  description String? @db.Text()
-  createdAt DateTime @default(now()) @db.Timestamp(6)
-  updatedAt DateTime @updatedAt 
-  isArchived Boolean @default(false)
-  status Status @default(TODO)
-  ownerId String?
-  owner User? @relation(fields: [ownerId], references: [id])
+model TodoItem {
+  id          String   @id @default(uuid())
+  active      Boolean  @default(true)
+  title       String   @db.Text
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime @updatedAt
+  isArchived  Boolean  @default(false)
+  status      Status   @default(TODO)
+  ownerId     String?
+  owner       User?    @relation(fields: [ownerId], references: [id])
 }
 
 model User {
-  active Boolean @default(true)
-  id      String   @id @default(uuid())
-  name    String    @db.Text()
-  email   String   @unique @db.Text()
-  imageUrl String?
-  todoItems TodoItem[] @relation()
-  createdAt DateTime @default(now()) @db.Timestamp(6)
-  updatedAt DateTime @updatedAt 
+  active    Boolean    @default(true)
+  id        String     @id @default(uuid())
+  name      String     @db.Text
+  email     String     @unique @db.Text
+  imageUrl  String?
+  todoItems TodoItem[] @relation
+  createdAt DateTime   @default(now()) @db.Timestamp(6)
+  updatedAt DateTime   @updatedAt
 }
 
 enum Status {
