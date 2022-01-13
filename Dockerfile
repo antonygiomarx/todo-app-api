@@ -1,6 +1,6 @@
 FROM node:14.17.3-stretch-slim
 
-RUN apt-get update && apt-get upgrade && apt-get install openssl -y
+RUN apt-get update && apt-get upgrade -y && apt-get install openssl -y
 
 WORKDIR /usr/src/app
 
