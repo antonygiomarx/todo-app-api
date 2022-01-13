@@ -1,14 +1,16 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Res } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { UserService } from '@services/user/user.service';
+import { Response } from 'express';
+import { BAD_REQUEST } from 'http-status';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly _userService: UserService) {}
+  constructor(private readonly userService: UserService) {}
 
   @Get()
   async getAll() {
-    const users = await this._userService.getAll();
+    const users = await this.userService.getAll();
 
     if (!users || users.length < 1) {
       return {
@@ -26,7 +28,7 @@ export class UserController {
 
   @Get(':id')
   async get(@Param('id') id: string) {
-    const user = (await this._userService.get(id)) as User;
+    const user = (await this.userService.get(id)) as User;
 
     if (!user) {
       return {
@@ -43,12 +45,11 @@ export class UserController {
   }
 
   @Post('create')
-  async create(@Body() user: User) {
-    const userExists = await this._userService.userExists(user);
+  async create(@Body() user: User, @Res() res: Response) {
+    const userExists = await this.userService.userExists(user);
 
     if (!userExists) {
-      const userCreated = await this._userService.create(user);
-      console.log('Usuario creado', userCreated);
+      const userCreated = await this.userService.create(user);
 
       if (!user) {
         return {
@@ -63,15 +64,17 @@ export class UserController {
         user: userCreated,
       };
     }
-    return {
-      success: false,
-      message: 'User already exists',
-    };
+    return res
+      .json({
+        success: false,
+        message: 'User already exists',
+      })
+      .status(BAD_REQUEST);
   }
 
   @Post('update')
   async update(@Body() user: User) {
-    const userExists = await this._userService.userExists(user);
+    const userExists = await this.userService.userExists(user);
 
     if (!userExists) {
       return {
@@ -80,8 +83,7 @@ export class UserController {
       };
     }
 
-    const userUpdated = await this._userService.update(user);
-    console.log(userUpdated);
+    const userUpdated = await this.userService.update(user);
 
     return {
       success: false,

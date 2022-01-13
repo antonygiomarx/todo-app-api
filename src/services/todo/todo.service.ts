@@ -1,13 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { TodoItem } from '@prisma/client';
+import { Todo } from '@prisma/client';
 import { PrismaService } from '@services/prisma/prisma.service';
 
 @Injectable()
 export class TodoService {
-  constructor(private readonly _prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
   async getAll() {
     try {
-      return await this._prisma.todoItem.findMany();
+      return this.prisma.todo.findMany({
+        where: {
+          active: true,
+        },
+      });
     } catch (error) {
       console.log(error);
       return null;
@@ -16,7 +20,7 @@ export class TodoService {
 
   async get(id: string) {
     try {
-      return await this._prisma.todoItem.findUnique({
+      return this.prisma.todo.findUnique({
         where: {
           id,
         },
@@ -27,13 +31,13 @@ export class TodoService {
     }
   }
 
-  async update(todoItem: TodoItem) {
+  async update(todo: Todo) {
     try {
-      return await this._prisma.todoItem.update({
+      return this.prisma.todo.update({
         where: {
-          id: todoItem.id,
+          id: todo.id,
         },
-        data: todoItem,
+        data: todo,
       });
     } catch (error) {
       console.log(error);
@@ -41,10 +45,10 @@ export class TodoService {
     }
   }
 
-  async create(data: TodoItem) {
+  async create(todo: Todo) {
     try {
-      return await this._prisma.todoItem.create({
-        data,
+      return this.prisma.todo.create({
+        data: todo,
       });
     } catch (error) {
       console.log(error);
@@ -54,12 +58,9 @@ export class TodoService {
 
   async delete(id: string) {
     try {
-      return await this._prisma.todoItem.update({
+      return this.prisma.todo.delete({
         where: {
           id,
-        },
-        data: {
-          active: false,
         },
       });
     } catch (error) {

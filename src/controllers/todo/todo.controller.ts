@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { TodoItem } from '@prisma/client';
+import { Todo } from '@prisma/client';
 import { TodoService } from '@services/todo/todo.service';
 
 @Controller('todo')
@@ -54,7 +54,9 @@ export class TodoController {
    * @returns todoItem
    */
   @Post('create')
-  async create(@Body() todoItem: TodoItem) {
+  async create(@Body() todoItem: Todo) {
+    console.log(todoItem);
+
     const createdTodo = await this._todoService.create(todoItem);
 
     if (!createdTodo) {
@@ -72,7 +74,7 @@ export class TodoController {
   }
 
   @Post('update')
-  async update(@Body() todoItem: TodoItem) {
+  async update(@Body() todoItem: Todo) {
     const todoUpdated = await this._todoService.update(todoItem);
 
     if (!todoUpdated) {

@@ -8,7 +8,7 @@ export class UserService {
 
   async getAll() {
     try {
-      return await this._prismaService.user.findMany();
+      return this._prismaService.user.findMany();
     } catch (error) {
       console.log(error);
       return null;
@@ -28,7 +28,7 @@ export class UserService {
 
   async create(user: User) {
     try {
-      return await this._prismaService.user.create({
+      return this._prismaService.user.create({
         data: user,
       });
     } catch (error) {
@@ -39,7 +39,7 @@ export class UserService {
 
   async update(user: User) {
     try {
-      return await this._prismaService.user.update({
+      return this._prismaService.user.update({
         where: {
           id: user.id,
         },
@@ -53,7 +53,7 @@ export class UserService {
 
   async delete(id: string) {
     try {
-      return await this._prismaService.user.update({
+      return this._prismaService.user.update({
         where: {
           id,
         },

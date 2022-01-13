@@ -2,41 +2,44 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
 }
 
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native"]
+  previewFeatures = ["mongoDb"]
 }
 
-model TodoItem {
-  id          String   @id @default(uuid())
+model Todo {
+  id        String   @id @default(dbgenerated()) @map("_id") @db.ObjectId
   active      Boolean  @default(true)
-  title       String   @db.Text
-  description String?  @db.Text
-  createdAt   DateTime @default(now()) @db.Timestamp(6)
-  updatedAt   DateTime @updatedAt
-  isArchived  Boolean  @default(false)
+  title       String   
+  description String?  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt @default(now())
   status      Status   @default(TODO)
-  ownerId     String?
   owner       User?    @relation(fields: [ownerId], references: [id])
+  ownerId     String?   @db.ObjectId  
 }
 
 model User {
+  id        String   @id @default(dbgenerated()) @map("_id") @db.ObjectId
   active    Boolean    @default(true)
-  id        String     @id @default(uuid())
-  name      String     @db.Text
-  email     String     @unique @db.Text
+  name      String?   
+  email     String    @unique
   imageUrl  String?
-  todoItems TodoItem[] @relation
-  createdAt DateTime   @default(now()) @db.Timestamp(6)
-  updatedAt DateTime   @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt @default(now())
+  role Role @default(USER)
+  todos     Todo[]  
 }
 
+enum Role {
+  USER
+  ADMIN
+}
 enum Status {
   TODO
-  DOING
   COMPLETED
 }
